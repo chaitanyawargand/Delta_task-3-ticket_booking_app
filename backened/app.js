@@ -36,6 +36,4 @@ app.all('*', (req, res, next) => {
 
 app.use(globalErrorHandler);
 
-console.log('✅ App.js loaded');
-
 module.exports = app;

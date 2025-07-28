@@ -1,0 +1,50 @@
+.profile-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+.profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #007bff;
+  object-fit: cover;
+}
+.profile-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #222;
+  text-transform: capitalize;
+}
+.profile-header p {
+  margin: 4px 0;
+  font-size: 1rem;
+  color: #555;
+}
+.user-role {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  color: #007bff;
+  background-color: #e6f0ff;
+  border-radius: 8px;
+  text-transform: uppercase;
+}
+.profile-header h3 {
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #333;
+}

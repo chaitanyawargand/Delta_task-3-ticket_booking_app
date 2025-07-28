@@ -1,14 +1,15 @@
-const event = require('./../modals/eventschema');
+const {event,MovieEvent,TrainEvent,ConcertEvent}=require('../modals/eventschema');
 const Factory= require('./../controllers/handlerFactory');
 const catchAsynch=require('./../utils/catchAsynch')
 const AppError= require('./../utils/apperror')
 const Booking=require('./../modals/bookingschema')
 const User=require('./../modals/userschema')
+const catchAsync= require('./../utils/catchAsynch')
+
 exports.setUserId=(req,res,next)=>{
     if(!req.body.vendor) req.body.vendor=req.user.id;
     next()
 }
-exports.createEvent=Factory.createOne(event);
 exports.getAllEvents=Factory.getAll(event,{select: '-__v', populate: {path: 'vendor',select: 'name email'}});
 exports.getMyEvents=Factory.getAll(event,req=>({vendor:req.user.id}),{select:'-__v', populate: {path: 'vendor',select: 'name email'}});
 exports.getEvent=Factory.getOne(event,{select: '-__v', populate: {path: 'vendor',select: 'name email'}});
@@ -33,3 +34,20 @@ exports.deleteEvent= catchAsynch( async(req,res,next)=>{
     message: 'Event deleted successfully',
   });
 })
+exports.createEvent = catchAsync(async (req, res, next) => {
+  let Model;
+  if(req.body.trainNumber || req.body.from || req.body.to) {
+    Model=TrainEvent
+  } else if(req.body.theatre || req.body.duration || req.body.showTime) {
+    Model=MovieEvent;
+  } else if(req.body.performer || req.body.venue) {
+    Model=ConcertEvent; }
+  if (req.user && req.user.id) { req.body.vendor = req.user.id; }
+  const newEvent=await Model.create(req.body);
+  res.status(201).json({
+    status: 'success',
+    data: {
+      data: newEvent
+    }
+  });
+});

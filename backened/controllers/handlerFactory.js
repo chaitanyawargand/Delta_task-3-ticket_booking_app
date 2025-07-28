@@ -27,20 +27,7 @@ exports.updateOne = Model =>catchAsync(async (req, res, next)=>{
       }
     });
   });
-
-exports.createOne = (Model) =>
-  catchAsync(async (req, res, next) => {
-    if(req.body.vendor) req.body.vendor= req.user.id;
-    const doc = await Model.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      data: {
-        data: doc
-      }
-    });
-  });
-
-exports.getOne = (Model,options={}, popOptions) =>
+exports.getOne = (Model,options={}) =>
   catchAsync(async (req, res, next) => {
    let query=Model.findById(req.params.id);
     if (options.populate) {
@@ -49,16 +36,14 @@ exports.getOne = (Model,options={}, popOptions) =>
     if (options.select) {
       query=query.select(options.select);
    }
-    const features=new APIFeatures(query, req.query).filter().search().sort();
-    const doc=await features.query;
+    const doc=await query;
     res.status(200).json({
       status: 'success',
       data: {
-        data: doc
+       doc
       }
     });
   });
-
 exports.getAll=(Model,options = {},filterFn=null)=>catchAsync(async (req, res, next)=>{
     const filter=typeof filterFn === 'function' ? filterFn(req) : {};
     let query=Model.find(filter);
@@ -72,7 +57,8 @@ exports.getAll=(Model,options = {},filterFn=null)=>catchAsync(async (req, res, n
     const doc=await features.query;
     // Clean _id, __v and nested vendor._id for events 
     const cleanedDocs=doc.map(doc => {
-      const obj=doc.toObject();
+      const obj=doc.toObject({virtuals:true});
+      obj.event= doc.event;
       delete obj._id;
       delete obj.__v;
       if(obj.vendor && typeof obj.vendor === 'object') {
